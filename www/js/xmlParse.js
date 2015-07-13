@@ -184,101 +184,67 @@ function parseLayers(brd){
 		c.cuts.push(currentLine);
 	}
 
+	
+
+	//By MosabWadea 14-7-2015
+	//NO NEED to find the holes in the traditional way because the script is doing it
+
 	// the HOLES canvas layer
+	//var c;
+	// var noHoles = true;
 
-	var c;
-	var noHoles = true;
+	// for(var p in brd.parts){
+	// 	var thisPart = brd.parts[p];
 
-	for(var p in brd.parts){
-		var thisPart = brd.parts[p];
+	// 	if(thisPart.holes){
+	// 		for(var i=0;i<thisPart.holes.length;i++){
 
-		if(thisPart.holes){
-			for(var i=0;i<thisPart.holes.length;i++){
+	// 			if(noHoles) {
+	// 				noHoles = false;
+	// 				c = makeCanvas('Holes');
+	// 				c.canvas.parent = c;
+	// 			}
 
-				if(noHoles) {
-					noHoles = false;
-					c = makeCanvas('Holes');
-					c.canvas.parent = c;
-				}
+	// 			var thisHole = thisPart.holes[i];
 
-				var thisHole = thisPart.holes[i];
-
-				var thisCut = [];
-				thisCut.push({
-					'x':thisHole.currentRelX + thisPart.x,
-					'y':thisHole.currentRelY + thisPart.y
-				});
-
-				c.cuts.push(thisCut);
-			}
-		}
-	}
-
-	var c;
-	var noCircles = true;
-
-	for(var v in brd.circles){
-
-		if(noCircles) {
-			noCircles = false;
-			c = makeCanvas('Circle');
-			c.canvas.parent = c;
-		}
-		var thisCircle = brd.circles[v];
-
-		var thisCut = [];
-		thisCut.push({
-			'x':thisCircle.x,
-			'y':thisCircle.y
-		});
-		c.cuts.push(thisCut);
-	}
-
-
-	// for(var n in brd.wires){
-	// 	var layerWires = brd.wires[n];
-	// 	var thisLayerName = currentBoard.info.layers[n];
-	// 	var c = makeCanvas(thisLayerName);
-	// 	c.canvas.parent = c;
-
-	// 	var currentLine = [];
-	// 	var prev = {'x':NaN,'y':NaN};
-
-	// 	for(var i=0;i<layerWires.length;i++){
-
-	// 		var wire = layerWires[i];
-
-	// 		// if it has a different starting point as the previous wire's ending point,
-	// 		// then that means it's a new 'cut' array
-	// 		if(i===0) {
-	// 			currentLine.push({
-	// 				'x':wire.x1,
-	// 				'y':wire.y1
+	// 			var thisCut = [];
+	// 			thisCut.push({
+	// 				'x':thisHole.currentRelX + thisPart.x,
+	// 				'y':thisHole.currentRelY + thisPart.y
 	// 			});
-	// 		}
-	// 		else if (prev.x!==wire.x1 || prev.y!==wire.y1) {
-	// 			c.cuts.push(currentLine);
-	// 			currentLine = [];
-	// 			currentLine.push({
-	// 				'x':wire.x1,
-	// 				'y':wire.y1
-	// 			});
-	// 		}
 
-	// 		if(wire.x2!==wire.x1 || wire.y1!==wire.y2){
-	// 			currentLine.push({
-	// 				'x':wire.x2,
-	// 				'y':wire.y2
-	// 			});
+	// 			c.cuts.push(thisCut);
 	// 		}
-
-	// 		prev.x = wire.x2;
-	// 		prev.y = wire.y2;
 	// 	}
+	// } 
 
-	// 	// add the final line we constructed
-	// 	c.cuts.push(currentLine);
-	// }
+
+	//By MosabWadea 14-7-2015
+
+	//adding circles to the cutlines
+	 for(var n in brd.circles){
+		var layerCircles = brd.circles[n];
+		var thisLayerName = currentBoard.info.layers[n];
+		var c = makeCanvas(thisLayerName);
+		c.canvas.parent = c;
+
+		var currentLine = [];
+
+		for(var i=0;i<layerCircles.length;i++){
+			var circle = layerCircles[i];
+			for(var j=1; j<361; j++){
+					var cx = circle.x + (circle.r * Math.cos(j * Math.PI / 180));
+					var cy = circle.y + (circle.r * Math.sin(j * Math.PI / 180));
+					currentLine.push({
+						'x': cx,
+						'y':cy
+					});
+				}
+				//push the last circle constructed
+				c.cuts.push(currentLine);
+				currentLine = [];
+		}
+	}
 	
 	// the VIAS canvas layer
 
@@ -692,6 +658,7 @@ function parseXML(theText){
 		return myWires;
 	}
 
+	//By MosabWadea 14-7-2015
 	// parse the circle elements in an object
 	function parseCircles(allCircles){
 		var myCircles = {};
@@ -892,7 +859,7 @@ function parseXML(theText){
 			// 'plain' holds toolpath wires and circles
 			var plain = theBoard.getElementsByTagName('plain')[0];
 			var allWires = plain.getElementsByTagName('wire');
-			var allCircles = plain.getElementsByTagName('circle');
+			var allCircles = plain.getElementsByTagName('circle'); //By MosabWadea 14-7-2015
 
 			// 'elements' holds a part's name, package, x, y, and rotation
 			var elements = theBoard.getElementsByTagName('elements')[0];
@@ -909,7 +876,7 @@ function parseXML(theText){
 			// create our parts
 			var myBoard = {
 				'wires' : parseWires(allWires),
-				'circles' : parseCircles(allCircles),
+				'circles' : parseCircles(allCircles),  //Ny MosabWadea 14-7-2015
 				'parts' : addHoles( allLibraries, parseParts(allElements) ),
 				'vias' : parseVias(allSignals)
 			};
