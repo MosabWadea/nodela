@@ -214,6 +214,72 @@ function parseLayers(brd){
 		}
 	}
 
+	var c;
+	var noCircles = true;
+
+	for(var v in brd.circles){
+
+		if(noCircles) {
+			noCircles = false;
+			c = makeCanvas('Circle');
+			c.canvas.parent = c;
+		}
+		var thisCircle = brd.circles[v];
+
+		var thisCut = [];
+		thisCut.push({
+			'x':thisCircle.x,
+			'y':thisCircle.y
+		});
+		c.cuts.push(thisCut);
+	}
+
+
+	// for(var n in brd.wires){
+	// 	var layerWires = brd.wires[n];
+	// 	var thisLayerName = currentBoard.info.layers[n];
+	// 	var c = makeCanvas(thisLayerName);
+	// 	c.canvas.parent = c;
+
+	// 	var currentLine = [];
+	// 	var prev = {'x':NaN,'y':NaN};
+
+	// 	for(var i=0;i<layerWires.length;i++){
+
+	// 		var wire = layerWires[i];
+
+	// 		// if it has a different starting point as the previous wire's ending point,
+	// 		// then that means it's a new 'cut' array
+	// 		if(i===0) {
+	// 			currentLine.push({
+	// 				'x':wire.x1,
+	// 				'y':wire.y1
+	// 			});
+	// 		}
+	// 		else if (prev.x!==wire.x1 || prev.y!==wire.y1) {
+	// 			c.cuts.push(currentLine);
+	// 			currentLine = [];
+	// 			currentLine.push({
+	// 				'x':wire.x1,
+	// 				'y':wire.y1
+	// 			});
+	// 		}
+
+	// 		if(wire.x2!==wire.x1 || wire.y1!==wire.y2){
+	// 			currentLine.push({
+	// 				'x':wire.x2,
+	// 				'y':wire.y2
+	// 			});
+	// 		}
+
+	// 		prev.x = wire.x2;
+	// 		prev.y = wire.y2;
+	// 	}
+
+	// 	// add the final line we constructed
+	// 	c.cuts.push(currentLine);
+	// }
+	
 	// the VIAS canvas layer
 
 	var c;
@@ -626,6 +692,33 @@ function parseXML(theText){
 		return myWires;
 	}
 
+	// parse the circle elements in an object
+	function parseCircles(allCircles){
+		var myCircles = {};
+		for(var i=0;i<allCircles.length;i++){
+			var tempCircle = allCircles[i];
+			var tempLayer = Number(tempCircle.getAttribute('layer'));
+
+
+
+			if(!myCircles[tempLayer]){
+				myCircles[tempLayer] = [];
+			}
+
+			var _w = {
+				'x' : makeMill(Number(tempCircle.getAttribute('x'))),
+				'y' : makeMill(Number(tempCircle.getAttribute('y'))),
+				'r' : makeMill(Number(tempCircle.getAttribute('radius'))),
+				'layer' : Number(tempCircle.getAttribute('layer'))
+			};
+
+			saveMinMax(_w.x,_w.y);
+
+			myCircles[tempLayer].push(_w);
+		}
+		return myCircles;
+	}
+
 	function parseParts(allElements){
 		var myParts = {};
 		for(var i=0;i<allElements.length;i++){
@@ -796,9 +889,10 @@ function parseXML(theText){
 
 		if(theBoard){
 
-			// 'plain' holds toolpath wires
+			// 'plain' holds toolpath wires and circles
 			var plain = theBoard.getElementsByTagName('plain')[0];
 			var allWires = plain.getElementsByTagName('wire');
+			var allCircles = plain.getElementsByTagName('circle');
 
 			// 'elements' holds a part's name, package, x, y, and rotation
 			var elements = theBoard.getElementsByTagName('elements')[0];
@@ -815,6 +909,7 @@ function parseXML(theText){
 			// create our parts
 			var myBoard = {
 				'wires' : parseWires(allWires),
+				'circles' : parseCircles(allCircles),
 				'parts' : addHoles( allLibraries, parseParts(allElements) ),
 				'vias' : parseVias(allSignals)
 			};
