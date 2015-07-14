@@ -650,9 +650,9 @@ function parseXML(theText){
 			var x1 = cx + (cr * Math.cos(Math.PI / 180));
 			var y1 = cy + (cr * Math.sin(Math.PI / 180));
 			//add all the other points
-			for(var j=2; j<361; j++){
-					var x2 = cx + (cr * Math.cos(j * Math.PI / 180));
-					var y2 = cy + (cr * Math.sin(j * Math.PI / 180));
+			for(var j=1; j<41; j++){	//this will make the loop to go over the full circle (360 dig) but divided over 40 parts, this is to make it faster
+					var x2 = cx + (cr * Math.cos((9*j) * (Math.PI / 180))); // the 9 is to make the 40th digree is the 360th 
+					var y2 = cy + (cr * Math.sin((9*j) * (Math.PI / 180)));
 					
 
 					var _c = {
