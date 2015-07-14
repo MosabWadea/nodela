@@ -137,6 +137,35 @@ function parseLayers(brd){
 	////////////
 	////////////
 
+
+	
+	//By MosabWadea 14-7-2015
+
+	//adding circles to the cutlines
+	 for(var n in brd.circles){
+		var layerCircles = brd.circles[n];
+		var thisLayerName = currentBoard.info.layers[n];
+		var c = makeCanvas(thisLayerName);
+		c.canvas.parent = c;
+
+		var currentLine = [];
+
+		for(var i=0;i<layerCircles.length;i++){
+			var circle = layerCircles[i];
+			for(var j=1; j<361; j++){
+					var cx = circle.x + (circle.r * Math.cos(j * Math.PI / 180));
+					var cy = circle.y + (circle.r * Math.sin(j * Math.PI / 180));
+					currentLine.push({
+						'x': cx,
+						'y':cy
+					});
+				}
+				//push the last circle constructed
+				c.cuts.push(currentLine);
+				currentLine = [];
+		}
+	}
+
 	// the WIRES canvas layer
 
 	for(var n in brd.wires){
@@ -219,32 +248,6 @@ function parseLayers(brd){
 	// } 
 
 
-	//By MosabWadea 14-7-2015
-
-	//adding circles to the cutlines
-	 for(var n in brd.circles){
-		var layerCircles = brd.circles[n];
-		var thisLayerName = currentBoard.info.layers[n];
-		var c = makeCanvas(thisLayerName);
-		c.canvas.parent = c;
-
-		var currentLine = [];
-
-		for(var i=0;i<layerCircles.length;i++){
-			var circle = layerCircles[i];
-			for(var j=1; j<361; j++){
-					var cx = circle.x + (circle.r * Math.cos(j * Math.PI / 180));
-					var cy = circle.y + (circle.r * Math.sin(j * Math.PI / 180));
-					currentLine.push({
-						'x': cx,
-						'y':cy
-					});
-				}
-				//push the last circle constructed
-				c.cuts.push(currentLine);
-				currentLine = [];
-		}
-	}
 	
 	// the VIAS canvas layer
 
