@@ -138,33 +138,85 @@ function parseLayers(brd){
 	////////////
 
 
-	
+
 	//By MosabWadea 14-7-2015
 
 	//adding circles to the cutlines
-	 for(var n in brd.circles){
+	//  for(var n in brd.circles){
+	// 	var layerCircles = brd.circles[n];
+	// 	var thisLayerName = currentBoard.info.layers[n];
+	// 	var c = makeCanvas(thisLayerName);
+	// 	c.canvas.parent = c;
+
+	// 	var currentLine = [];
+
+	// 	for(var i=0;i<layerCircles.length;i++){
+	// 		var circle = layerCircles[i];
+	// 		for(var j=1; j<361; j++){
+	// 				var cx = circle.x + (circle.r * Math.cos(j * Math.PI / 180));
+	// 				var cy = circle.y + (circle.r * Math.sin(j * Math.PI / 180));
+	// 				currentLine.push({
+	// 					'x': cx,
+	// 					'y':cy
+	// 				});
+	// 			}
+	// 			//push the last circle constructed
+	// 			c.cuts.push(currentLine);
+	// 			currentLine = [];
+	// 	}
+	// }
+
+	for(var n in brd.circles){
 		var layerCircles = brd.circles[n];
 		var thisLayerName = currentBoard.info.layers[n];
 		var c = makeCanvas(thisLayerName);
 		c.canvas.parent = c;
 
 		var currentLine = [];
+		var prev = {'x':NaN,'y':NaN};
 
 		for(var i=0;i<layerCircles.length;i++){
+
 			var circle = layerCircles[i];
-			for(var j=1; j<361; j++){
-					var cx = circle.x + (circle.r * Math.cos(j * Math.PI / 180));
-					var cy = circle.y + (circle.r * Math.sin(j * Math.PI / 180));
-					currentLine.push({
-						'x': cx,
-						'y':cy
-					});
-				}
-				//push the last circle constructed
+
+			// if it has a different starting point as the previous circle's ending point,
+			// then that means it's a new 'cut' array
+			if(i===0) {
+				currentLine.push({
+					'x':circle.x1,
+					'y':circle.y1
+				});
+			}
+			else if (prev.x!==circle.x1 || prev.y!==circle.y1) {
 				c.cuts.push(currentLine);
 				currentLine = [];
+				currentLine.push({
+					'x':circle.x1,
+					'y':circle.y1
+				});
+			}
+
+			if(circle.x2!==circle.x1 || circle.y1!==circle.y2){
+				currentLine.push({
+					'x':circle.x2,
+					'y':circle.y2
+				});
+			}
+
+			prev.x = circle.x2;
+			prev.y = circle.y2;
 		}
+
+		// add the final line we constructed
+		c.cuts.push(currentLine);
 	}
+
+
+
+
+
+
+
 
 	// the WIRES canvas layer
 
@@ -675,16 +727,35 @@ function parseXML(theText){
 				myCircles[tempLayer] = [];
 			}
 
-			var _w = {
-				'x' : makeMill(Number(tempCircle.getAttribute('x'))),
-				'y' : makeMill(Number(tempCircle.getAttribute('y'))),
-				'r' : makeMill(Number(tempCircle.getAttribute('radius'))),
-				'layer' : Number(tempCircle.getAttribute('layer'))
-			};
+			var cx = Number(tempCircle.getAttribute('x'));
+			var cy = Number(tempCircle.getAttribute('y'));
+			var cr = Number(tempCircle.getAttribute('radius'));
 
-			saveMinMax(_w.x,_w.y);
+			//find the first pont of the circle
+			var x1 = cx + (cr * Math.cos(Math.PI / 180));
+			var y1 = cy + (cr * Math.sin(Math.PI / 180));
+			//add all the other points
+			for(var j=2; j<361; j++){
+					var x2 = cx + (cr * Math.cos(j * Math.PI / 180));
+					var y2 = cy + (cr * Math.sin(j * Math.PI / 180));
+					
 
-			myCircles[tempLayer].push(_w);
+					var _c = {
+						'x1' : makeMill(x1),
+						'x2' : makeMill(x2),
+						'y1' : makeMill(y1),
+						'y2' : makeMill(y2),
+						'layer' : Number(tempCircle.getAttribute('layer'))
+					};
+
+					saveMinMax(_c.x,_c.y);
+
+					myCircles[tempLayer].push(_c);
+
+
+					x1 = x2;
+					y1 = y2;
+			}
 		}
 		return myCircles;
 	}
