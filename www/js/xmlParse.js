@@ -643,8 +643,7 @@ function parseXML(theText){
 
 			var cx = Number(tempCircle.getAttribute('x'));
 			var cy = Number(tempCircle.getAttribute('y'));
-			var crError = Number(tempCircle.getAttribute('width'))/2;  //this is because some of the large circles have a width factor. that minimizes the true radius.
-			var cr = Number(tempCircle.getAttribute('radius'))+crError;
+			var cr = Number(tempCircle.getAttribute('radius'));
 
 			//find the first pont of the circle
 			var x1 = cx + (cr * Math.cos(Math.PI / 180));
