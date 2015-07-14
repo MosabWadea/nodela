@@ -138,86 +138,6 @@ function parseLayers(brd){
 	////////////
 
 
-
-	//By MosabWadea 14-7-2015
-
-	//adding circles to the cutlines
-	//  for(var n in brd.circles){
-	// 	var layerCircles = brd.circles[n];
-	// 	var thisLayerName = currentBoard.info.layers[n];
-	// 	var c = makeCanvas(thisLayerName);
-	// 	c.canvas.parent = c;
-
-	// 	var currentLine = [];
-
-	// 	for(var i=0;i<layerCircles.length;i++){
-	// 		var circle = layerCircles[i];
-	// 		for(var j=1; j<361; j++){
-	// 				var cx = circle.x + (circle.r * Math.cos(j * Math.PI / 180));
-	// 				var cy = circle.y + (circle.r * Math.sin(j * Math.PI / 180));
-	// 				currentLine.push({
-	// 					'x': cx,
-	// 					'y':cy
-	// 				});
-	// 			}
-	// 			//push the last circle constructed
-	// 			c.cuts.push(currentLine);
-	// 			currentLine = [];
-	// 	}
-	// }
-
-	for(var n in brd.circles){
-		var layerCircles = brd.circles[n];
-		var thisLayerName = currentBoard.info.layers[n];
-		var c = makeCanvas(thisLayerName);
-		c.canvas.parent = c;
-
-		var currentLine = [];
-		var prev = {'x':NaN,'y':NaN};
-
-		for(var i=0;i<layerCircles.length;i++){
-
-			var circle = layerCircles[i];
-
-			// if it has a different starting point as the previous circle's ending point,
-			// then that means it's a new 'cut' array
-			if(i===0) {
-				currentLine.push({
-					'x':circle.x1,
-					'y':circle.y1
-				});
-			}
-			else if (prev.x!==circle.x1 || prev.y!==circle.y1) {
-				c.cuts.push(currentLine);
-				currentLine = [];
-				currentLine.push({
-					'x':circle.x1,
-					'y':circle.y1
-				});
-			}
-
-			if(circle.x2!==circle.x1 || circle.y1!==circle.y2){
-				currentLine.push({
-					'x':circle.x2,
-					'y':circle.y2
-				});
-			}
-
-			prev.x = circle.x2;
-			prev.y = circle.y2;
-		}
-
-		// add the final line we constructed
-		c.cuts.push(currentLine);
-	}
-
-
-
-
-
-
-
-
 	// the WIRES canvas layer
 
 	for(var n in brd.wires){
@@ -267,61 +187,55 @@ function parseLayers(brd){
 
 	
 
-	//By MosabWadea 14-7-2015
-	//NO NEED to find the holes in the traditional way because the script is doing it
-
-	// the HOLES canvas layer
-	//var c;
-	// var noHoles = true;
-
-	// for(var p in brd.parts){
-	// 	var thisPart = brd.parts[p];
-
-	// 	if(thisPart.holes){
-	// 		for(var i=0;i<thisPart.holes.length;i++){
-
-	// 			if(noHoles) {
-	// 				noHoles = false;
-	// 				c = makeCanvas('Holes');
-	// 				c.canvas.parent = c;
-	// 			}
-
-	// 			var thisHole = thisPart.holes[i];
-
-	// 			var thisCut = [];
-	// 			thisCut.push({
-	// 				'x':thisHole.currentRelX + thisPart.x,
-	// 				'y':thisHole.currentRelY + thisPart.y
-	// 			});
-
-	// 			c.cuts.push(thisCut);
-	// 		}
-	// 	}
-	// } 
-
-
 	
-	// the VIAS canvas layer
+	//By MosabWadea 14-7-2015
 
-	var c;
-	var noVias = true;
+	//adding circles to the cutlines
+	for(var n in brd.circles){
+		var layerCircles = brd.circles[n];
+		var thisLayerName = currentBoard.info.layers[n];
+		var c = makeCanvas(thisLayerName);
+		c.canvas.parent = c;
 
-	for(var v in brd.vias){
+		var currentLine = [];
+		var prev = {'x':NaN,'y':NaN};
 
-		if(noVias) {
-			noVias = false;
-			c = makeCanvas('Vias');
-			c.canvas.parent = c;
+		for(var i=0;i<layerCircles.length;i++){
+
+			var circle = layerCircles[i];
+
+			// if it has a different starting point as the previous circle's ending point,
+			// then that means it's a new 'cut' array
+			if(i===0) {
+				currentLine.push({
+					'x':circle.x1,
+					'y':circle.y1
+				});
+			}
+			else if (prev.x!==circle.x1 || prev.y!==circle.y1) {
+				c.cuts.push(currentLine);
+				currentLine = [];
+				currentLine.push({
+					'x':circle.x1,
+					'y':circle.y1
+				});
+			}
+
+			if(circle.x2!==circle.x1 || circle.y1!==circle.y2){
+				currentLine.push({
+					'x':circle.x2,
+					'y':circle.y2
+				});
+			}
+
+			prev.x = circle.x2;
+			prev.y = circle.y2;
 		}
-		var thisVia = brd.vias[v];
 
-		var thisCut = [];
-		thisCut.push({
-			'x':thisVia.x,
-			'y':thisVia.y
-		});
-		c.cuts.push(thisCut);
+		// add the final line we constructed
+		c.cuts.push(currentLine);
 	}
+	//MosabWadea
 }
 
 //////////////////////////////////////////
@@ -729,7 +643,8 @@ function parseXML(theText){
 
 			var cx = Number(tempCircle.getAttribute('x'));
 			var cy = Number(tempCircle.getAttribute('y'));
-			var cr = Number(tempCircle.getAttribute('radius'));
+			var crError = Number(tempCircle.getAttribute('width'))/2;  //this is because some of the large circles have a width factor. that minimizes the true radius.
+			var cr = Number(tempCircle.getAttribute('radius'))+crError;
 
 			//find the first pont of the circle
 			var x1 = cx + (cr * Math.cos(Math.PI / 180));
@@ -759,6 +674,8 @@ function parseXML(theText){
 		}
 		return myCircles;
 	}
+	//MosabWadea
+	///////////////
 
 	function parseParts(allElements){
 		var myParts = {};
