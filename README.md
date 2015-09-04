@@ -44,6 +44,7 @@ Or just run the script file: "RunNodela"
 
 The script will attempt to open `localhost` in your default browser, and the interface will prompt you to drag your `.brd` Eagle file onto the screen.
 
+####change the `com` port
 When installing the Roland driver, the machine will have been assigned a port name. Mine is called `com3`. To work with your configuration, open `nodela.js` in an editor and edit the following line:
 
 ```var rolandPortName = YOUR_PORT_NAME_HERE;```
@@ -57,6 +58,7 @@ No need to export from Eagle. Simply drag and drop your `.brd` file into the bro
  - Wires
  - Part Holes
  - Vias
+ - Circles
 
 You can check this method to make mill paths using the `mill-outline.ulp` that is built-in in eagle.
 
@@ -79,5 +81,4 @@ By selecting the current bit and cut depth, nodela will decide the best settings
 ####New Bed Design
 
 The original nodela developed by [AndySingler](https://github.com/andySigler) has a different bed design.
-
-in this version I made a different design for the bed. Please check out my repo to get the design files and to see all the steps [github.com/MosabWadea/ModelaBed](https://github.com/MosabWadea/ModelaBed)
+In this version I made a different design for the bed. Please check out my repo to get the design files and to see all the steps [github.com/MosabWadea/ModelaBed](https://github.com/MosabWadea/ModelaBed)
