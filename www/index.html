@@ -26,11 +26,43 @@
 					<option value="0.0625">1/16 End Mill</option>
 					<option value="0.125">1/8 End Mill</option>
 					<option value="0.25">1/4 End Mill</option>
-					<option value="2.0">Drill Bit (any size)</option>
+					<option value="0.0625">Drill Bit (any size)</option>
 				</select>
 				<input class="layer_input" id="cutDepth" type="text" />
 
-				<div class="howDeep_instruction">How many <strong>inches</strong> to cut down<br />(~ 0.01 will remove just copper)</div>
+				<div class="howDeep_instruction">How many <strong>inches</strong> to cut down<br></div>
+				
+				<div class="divider"></div>
+				<div class="stepSize_label">Instructions</div>
+
+				<div>
+					<p>
+						<b>1.</b> Select the layer to mill.<br>
+						<b>2.</b> Choose the proper drill bit from the drop down list.<br>
+						<b>3.</b> Select the mill depth you want based on the table:<br>
+						<table style="width:100%">
+						  <tr>
+						    <td><b>Job</b></td>
+						    <td><b>depth</b></td> 
+						  </tr>
+						  <tr>
+						    <td>mill reference holes</td>
+						    <td>0.17</td> 
+						  </tr>
+						  <tr>
+						    <td>mill copper only</td>
+						    <td>0.005</td> 
+						  </tr>
+						  <tr>
+						    <td>mill cuts</td>
+						    <td>0.07</td> 
+						  </tr>
+						</table><br>
+						<b>4.</b> Click "Run Job".<br>
+						<br>
+						<i><font size="2"><center>Check out the full tutorial of PCB manufacturing using Roland Modela MDX-20 on Instructables:<br><a href="#"> ""I will add instructables link here""</a></center></font></i>
+					</p>
+				</div>
 
 				<div class="divider"></div>
 
@@ -56,7 +88,7 @@
 
 				<script type="text/javascript">
 
-					var minCutDepth = 0.01;
+					var minCutDepth = 0.005;
 
 					window.addEventListener('load',function(e){
 						var depthInput = document.getElementById('cutDepth');
@@ -73,12 +105,10 @@
 				<div class="divider"></div>
 
 				<button onclick="printLayer()" id="print_button" class="bigbutton">Run Job</button>
-				<button onclick="Roland_eraseMemory()" id="erase_button" class="bigbutton">Delete Job</button>
-				<button onclick="createPnP()" id="pnp_button" class="mediumbutton">Create PnP .csv</button>
-				<button onclick="loadFacingPlan()" id="facing_button" class="mediumbutton">Load Facing Plan</button>
 
-				<div style="width:100%;text-align:center;color:black;margin-top:20px;font-size:12px;">Original: github.com/andysigler/nodela</div>
-				<div style="width:100%;text-align:center;color:black;margin-top:20px;font-size:12px;">Updated: github.com/MosabWadea/nodela</div>
+				<div style="width:100%;text-align:center;color:black;margin-top:20px;font-size:12px;">You can get a design for the modela bed from my repo: <a href="https://github.com/MosabWadea/ModelaBed">github.com/MosabWadea/ModelaBed</a></div>
+				<div style="width:100%;text-align:center;color:black;margin-top:20px;font-size:12px;">Original: <a href="github.com/andysigler/nodela">github.com/andysigler/nodela</a></div>
+				<div style="width:100%;text-align:center;color:black;font-size:12px;">Updated: <a href="github.com/MosabWadea/nodela">github.com/MosabWadea/nodela</a></div>
 
 			</div>
 
