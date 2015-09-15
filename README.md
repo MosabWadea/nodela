@@ -29,6 +29,10 @@ Download  .zip, or using Git:
 
 `git clone https://github.com/MosabWadea/nodela`
 
+Then run the script file ```installNodela.bat```
+
+OR
+
 Use the windows command line to install dependencies with npm:
 
 ```cd nodela```
@@ -38,9 +42,10 @@ Use the windows command line to install dependencies with npm:
 
 ##Use
 
-To run with node, use windows command line to run:
+To run with node, just run the script file ```runNodela.bat``` or use windows command line to run:
 ```node nodela.js```.
-Or just run the script file: "RunNodela"
+
+P.S. you can create desktop short cut for the script file on the desktop to make it faster for you to reach nodela.
 
 The script will attempt to open `localhost` in your default browser, and the interface will prompt you to drag your `.brd` Eagle file onto the screen.
 
